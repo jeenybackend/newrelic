@@ -16,15 +16,19 @@ class TransactionTest extends \PHPUnit_Framework_TestCase
     public static $exception;
     public static $applicationName;
     public static $extensionAvailable;
+    public static $transactionsCount;
+
+    private $config;
 
     public function setUp()
     {
-        $config = new TransactionConfig();
-        $config->applicationName = 'Panthro';
-        $config->transactionName = 'Jaga';
+        $this->config = new TransactionConfig();
+        $this->config->applicationName = 'Panthro';
+        $this->config->transactionName = 'Jaga';
         self::$extensionAvailable = true;
-        $this->transaction = new Transaction(new Foo(), $config);
+        $this->transaction = new Transaction(new Foo(), $this->config);
         self::$endTransaction = false;
+        self::$transactionsCount = 0;
     }
 
     public function testHasAbilityToSetApplicationName()
@@ -138,11 +142,22 @@ class TransactionTest extends \PHPUnit_Framework_TestCase
 
         new Transaction(new \StdClass, new TransactionConfig());
     }
+
+    public function testTransactioIsStartedOnlyForDesiredMethodCall()
+    {
+        $this->config->monitoredMethodName = 'foo';
+
+        $this->transaction->bar();
+        $this->transaction->foo();
+
+        $this->assertEquals(1, self::$transactionsCount);
+    }
 }
 
 function newrelic_start_transaction($appName)
 {
     TransactionTest::$applicationNameStarted = $appName;
+    TransactionTest::$transactionsCount++;
 }
 
 function newrelic_name_transaction($transactionName)

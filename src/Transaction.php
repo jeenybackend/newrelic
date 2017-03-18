@@ -36,19 +36,15 @@ class Transaction
 
     public function __call($name, $arguments)
     {
-        newrelic_set_appname($this->config->applicationName);
-        newrelic_start_transaction($this->config->applicationName);
-        newrelic_name_transaction($this->config->transactionName);
-        $customParameters = $this->formatter->format($arguments);
-        $this->addNewRelicParameter($customParameters);
+        $this->transactionStart($name, $arguments);
 
         try {
             return call_user_func_array([$this->instance, $name], $arguments);
         } catch (\Exception $genericException) {
-            newrelic_notice_error($genericException->getMessage(), $genericException);
+            $this->transactionFail($name, $genericException);
             throw $genericException;
         } finally {
-            newrelic_end_transaction();
+            $this->transactionEnd($name);
         }
     }
 
@@ -61,5 +57,41 @@ class Transaction
                 newrelic_add_custom_parameter($key, @json_encode($value));
             }
         }
+    }
+
+    private function transactionStart($name, $arguments)
+    {
+        if (!$this->shouldBeMonitored($name)) {
+            return;
+        }
+
+        newrelic_set_appname($this->config->applicationName);
+        newrelic_start_transaction($this->config->applicationName);
+        newrelic_name_transaction($this->config->transactionName);
+        $customParameters = $this->formatter->format($arguments);
+        $this->addNewRelicParameter($customParameters);
+    }
+
+    private function shouldBeMonitored($name)
+    {
+        return !$this->config->monitoredMethodName || $name == $this->config->monitoredMethodName;
+    }
+
+    private function transactionEnd($name)
+    {
+        if (!$this->shouldBeMonitored($name)) {
+            return;
+        }
+
+        newrelic_end_transaction();
+    }
+
+    private function transactionFail($name, \Exception $genericException)
+    {
+        if (!$this->shouldBeMonitored($name)) {
+            return;
+        }
+
+        newrelic_notice_error($genericException->getMessage(), $genericException);
     }
 }

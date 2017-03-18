@@ -9,25 +9,42 @@ New Relic Transaction Library
 
 Use this library to report background jobs or long running scripts to New Relic APM.
 
+## Examples
+
 ```php
 <?php
 
-namespace EmailConsumer;
+namespace Consumers;
 
-class EmailConsumer
+class Email
 {
     public function sendEmail($recipient, $body, $header)
     {
         //Send email
     }
+
+    public function beforePerform()
+    {
+        //Before Hook
+    }
+
+    public function perform()
+    {
+        //Perform a job
+    }
+
+    public function afterPerform()
+    {
+        //After Hook
+    }
 }
 
-namespace A\B;
+namespace Foo\Bar;
 
 use EasyTaxi\NewRelic;
-use EmailConsumer;
+use Consumers;
 
-$consumer = new EmailConsumer();
+$consumer = new Consumers\Email();
 
 while (true) {
     $transactionConfig = new NewRelic\Config\TransactionConfig();
@@ -35,10 +52,28 @@ while (true) {
     $transactionConfig->transactionName = 'consumer::sendEmail';
     $consumerMonitored = new NewRelic\Transaction($consumer, $transactionConfig);
     $consumerMonitored->sendEmail('Spock', 'James', 'Tiberius');
+
+    $transactionConfig->monitoredMethodName = 'perform';
+    $consumerMonitored->beforePerform();
+    $consumerMonitored->perform();
+    $consumerMonitored->afterPerform();
 }
 ```
 
 > You MUST have an agent configured and running on the server
+
+## Configuration options
+
+Use `TransactionConfig` class to personalize your job.
+
+- You can use `transactionName` field to specify the name of each transactions
+    > Defaults to `index.php` if not specified
+
+- You can use `applicationName` field to specify the name your application
+    > Defaults to `PHP Application` if not specified
+
+- You can use `monitoredMethodName` field to specify only one method to be monitored
+    > If not defined every call to a method will be considered one transaction
 
 New Relic Insights Library
 ==========================

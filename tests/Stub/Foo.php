@@ -13,4 +13,9 @@ class Foo
     {
         throw $exception;
     }
+
+    public function foo($argument = null)
+    {
+        return $argument;
+    }
 }
