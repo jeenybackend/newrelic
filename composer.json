@@ -16,12 +16,12 @@
         }
     },
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=7.0",
         "guzzlehttp/guzzle": "^6.1",
         "Respect/Validation": "~1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8",
+        "phpunit/phpunit": "^6.0",
         "squizlabs/php_codesniffer": "^2.4"
     },
     "autoload-dev": {

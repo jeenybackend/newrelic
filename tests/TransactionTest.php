@@ -4,8 +4,9 @@ namespace EasyTaxi\NewRelic;
 
 use EasyTaxi\NewRelic\Config\TransactionConfig;
 use EasyTaxi\NewRelic\Stub\Foo;
+use PHPUnit\Framework\TestCase;
 
-class TransactionTest extends \PHPUnit_Framework_TestCase
+class TransactionTest extends TestCase
 {
     private $transaction;
     public static $transactionName;

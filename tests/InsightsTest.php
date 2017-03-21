@@ -12,8 +12,9 @@ use GuzzleHttp\Middleware;
 use EasyTaxi\NewRelic\Insights;
 use EasyTaxi\NewRelic\Entity\Insights\EventCollection;
 use EasyTaxi\NewRelic\Entity\Insights\Event;
+use PHPUnit\Framework\TestCase;
 
-class InsightsTest extends \PHPUnit_Framework_TestCase
+class InsightsTest extends TestCase
 {
     private $newRelicInsights;
     private $requestContainer;
