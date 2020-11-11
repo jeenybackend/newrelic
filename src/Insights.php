@@ -15,7 +15,7 @@ class Insights
     {
         $this->client = $client;
         $this->key = $key;
-        $baseUrl = $this->client->getConfig('base_uri');
+        $baseUrl = $this->client->getConfig('base_uri')->__toString();
         Validator::notEmpty()
             ->url()
             ->endsWith('/')

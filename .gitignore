@@ -10,3 +10,5 @@ composer.lock
 #Development
 .DS_Store
 .idea/
+.vscode/
+.phpunit.result.cache

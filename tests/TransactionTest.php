@@ -21,7 +21,7 @@ class TransactionTest extends TestCase
 
     private $config;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->config = new TransactionConfig();
         $this->config->applicationName = 'Panthro';
@@ -81,12 +81,10 @@ class TransactionTest extends TestCase
         $this->assertEquals($argument, $returnedArgument);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cheetara
-     */
     public function testExceptionStillTheSame()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cheetara');
         $expectedException = new \InvalidArgumentException('Cheetara');
 
         $this->transaction->fooThrowThisException($expectedException);
@@ -126,19 +124,15 @@ class TransactionTest extends TestCase
         $this->assertTrue(self::$endTransaction);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testNonObject()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Transaction('Cheetara', new TransactionConfig());
     }
 
-    /**
-     * @expectedException \EasyTaxi\NewRelic\Exception\NotLoadedNewRelicExtensionException
-     */
     public function testExceptionIfExtensionIsNotLoaded()
     {
+        $this->expectException(\EasyTaxi\NewRelic\Exception\NotLoadedNewRelicExtensionException::class);
         self::$extensionAvailable = false;
 
         new Transaction(new \StdClass, new TransactionConfig());

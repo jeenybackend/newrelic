@@ -20,7 +20,7 @@ class InsightsTest extends TestCase
     private $requestContainer;
     private $handler;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->requestContainer = [];
         $history = Middleware::history($this->requestContainer);
@@ -73,10 +73,10 @@ class InsightsTest extends TestCase
 
     /**
      * @dataProvider provideInvalidEventTypes
-     * @expectedException Exception
      */
     public function testEventType($type)
     {
+        $this->expectException(\Exception::class);
         $event = new Event();
         $event->eventType = $type;
         $events = new EventCollection();
